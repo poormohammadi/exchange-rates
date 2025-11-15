@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import { ExchangeRatesPage } from './pages';
 
 function App() {
