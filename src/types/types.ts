@@ -6,3 +6,8 @@ export interface Currency {
 export interface ExchangeRates {
   [currencyCode: string]: number;
 }
+
+export interface CurrencyData {
+  date: string;
+  rates: ExchangeRates;
+}

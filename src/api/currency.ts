@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Currency } from '../types';
+import { Currency, ExchangeRates } from '../types';
 
 const BASE_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0';
 
@@ -15,4 +15,20 @@ export const fetchAvailableCurrencies = async (): Promise<Currency[]> => {
     code: code.toUpperCase(),
     name: name as string,
   }));
+};
+
+export const fetchExchangeRates = async (
+  date: string,
+  currencyCode: string
+): Promise<ExchangeRates> => {
+  const url = `currency-api@${date}/v1/currencies/${currencyCode.toLowerCase()}.json`;
+  const response =
+    await customAxios.get<Record<string, Record<string, number>>>(url);
+  const rates: ExchangeRates = {};
+  Object.entries(response.data[currencyCode.toLowerCase()]).forEach(
+    ([code, rate]) => {
+      rates[code.toUpperCase()] = rate as number;
+    }
+  );
+  return rates;
 };
