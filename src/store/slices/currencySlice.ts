@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { fetchAvailableCurrencies } from '../../api';
 import { Currency, CurrencyData } from '../../types';
 
 const DEFAULT_CURRENCIES = ['USD', 'EUR', 'JPY', 'CHF', 'CAD', 'AUD', 'ZAR'];
@@ -24,6 +25,13 @@ const initialState: CurrencyState = {
   error: null,
   selectedDate: new Date().toISOString().split('T')[0],
 };
+
+export const loadAvailableCurrencies = createAsyncThunk(
+  'currency/loadAvailableCurrencies',
+  async () => {
+    return await fetchAvailableCurrencies();
+  }
+);
 
 const currencySlice = createSlice({
   name: 'currency',
@@ -58,6 +66,21 @@ const currencySlice = createSlice({
     clearError: state => {
       state.error = null;
     },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(loadAvailableCurrencies.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadAvailableCurrencies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.availableCurrencies = action.payload;
+      })
+      .addCase(loadAvailableCurrencies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to load currencies';
+      });
   },
 });
 
