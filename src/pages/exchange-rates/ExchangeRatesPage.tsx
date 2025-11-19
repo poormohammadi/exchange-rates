@@ -1,6 +1,7 @@
 import { Alert, Box, Button, Container, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 
+import { DatePicker } from '../../components';
 import {
   addCurrency,
   clearError,
@@ -14,7 +15,6 @@ import {
 } from '../../store';
 import { CurrencySelector } from './CurrencySelector';
 import { CurrencyTable } from './CurrencyTable';
-import { DatePicker } from './DatePicker';
 
 export const ExchangeRatesPage = () => {
   const dispatch = useAppDispatch();
