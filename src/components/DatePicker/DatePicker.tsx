@@ -8,12 +8,14 @@ interface DatePickerProps {
   selectedDate: string;
   onDateChange: (date: string) => void;
   maxDaysBack?: number;
+  label?: string;
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
   selectedDate,
   onDateChange,
   maxDaysBack = 90,
+  label = 'Select Date',
 }) => {
   const today = dayjs();
   const minDate = today.subtract(maxDaysBack, 'day');
@@ -29,7 +31,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MuiDatePicker
-        label="Select Date"
+        label={label}
         value={dayjs(selectedDate)}
         onChange={handleDateChange}
         minDate={minDate}
