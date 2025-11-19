@@ -49,7 +49,7 @@ export const CurrencyTable: React.FC<CurrencyTableProps> = ({
           <TableRow>
             <TableCell>Date</TableCell>
             {selectedCurrencies.map(currency => (
-              <TableCell key={currency} align="right">
+              <TableCell key={currency} align="center">
                 {currency}
               </TableCell>
             ))}
@@ -62,7 +62,7 @@ export const CurrencyTable: React.FC<CurrencyTableProps> = ({
                 {new Date(data.date).toLocaleDateString()}
               </TableCell>
               {selectedCurrencies.map(currency => (
-                <TableCell key={currency} align="right">
+                <TableCell key={currency} align="center">
                   {data.rates[currency]?.toFixed(4) || 'N/A'}
                 </TableCell>
               ))}
