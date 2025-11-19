@@ -13,6 +13,7 @@
 ## 📋 Table of Contents
 
 - [About](#-about)
+- [Demo](#-demo)
 - [Getting Started](#-getting-started)
 - [Task Requirements](#-task-requirements)
 - [Features](#-features)
@@ -28,6 +29,10 @@
 ## 🎯 About
 
 The application allows users to view exchange rates for a selected base currency against other currencies over the last 7 days from a chosen date (up to 90 days in the past).
+
+## 🎬 Demo
+
+Check out the live demo: [View Demo](https://jam.dev/c/7775ce23-ef5c-46d1-8fca-a711eb4cbde0)
 
 ## 🚀 Getting Started
 
