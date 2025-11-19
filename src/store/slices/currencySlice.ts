@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import dayjs from 'dayjs';
 
-import { fetchAvailableCurrencies } from '../../api';
+import { fetchAvailableCurrencies, fetchExchangeRates } from '../../api';
 import { Currency, CurrencyData } from '../../types';
 
 const DEFAULT_CURRENCIES = ['USD', 'EUR', 'JPY', 'CHF', 'CAD', 'AUD', 'ZAR'];
 const DEFAULT_BASE_CURRENCY = 'GBP';
+const DAYS_TO_FETCH = 7;
 
 interface CurrencyState {
   baseCurrency: string;
@@ -30,6 +32,28 @@ export const loadAvailableCurrencies = createAsyncThunk(
   'currency/loadAvailableCurrencies',
   async () => {
     return await fetchAvailableCurrencies();
+  }
+);
+
+export const loadExchangeRates = createAsyncThunk(
+  'currency/loadExchangeRates',
+  async ({ date, baseCurrency }: { date: string; baseCurrency: string }) => {
+    const selectedDate = dayjs(date);
+
+    const dates = Array.from({ length: DAYS_TO_FETCH }, (_, index) =>
+      selectedDate.subtract(index, 'day').format('YYYY-MM-DD')
+    );
+
+    const ratesPromises = dates.map(async dateStr => {
+      const rates = await fetchExchangeRates(dateStr, baseCurrency);
+      return {
+        date: dateStr,
+        rates,
+      };
+    });
+
+    const ratesData = await Promise.all(ratesPromises);
+    return ratesData;
   }
 );
 
@@ -80,6 +104,18 @@ const currencySlice = createSlice({
       .addCase(loadAvailableCurrencies.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to load currencies';
+      })
+      .addCase(loadExchangeRates.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loadExchangeRates.fulfilled, (state, action) => {
+        state.loading = false;
+        state.exchangeRates = action.payload;
+      })
+      .addCase(loadExchangeRates.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

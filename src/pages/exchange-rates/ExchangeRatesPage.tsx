@@ -1,9 +1,11 @@
-import { Box, Container, Typography } from '@mui/material';
+import { Alert, Box, Button, Container, Typography } from '@mui/material';
 import React, { useEffect } from 'react';
 
 import {
   addCurrency,
+  clearError,
   loadAvailableCurrencies,
+  loadExchangeRates,
   removeCurrency,
   setBaseCurrency,
   setSelectedDate,
@@ -23,6 +25,7 @@ export const ExchangeRatesPage = () => {
     selectedDate,
     exchangeRates,
     loading,
+    error,
   } = useAppSelector(state => state.currency);
 
   const handleAddCurrency = (currency: string) => {
@@ -37,9 +40,26 @@ export const ExchangeRatesPage = () => {
     dispatch(setBaseCurrency(currency));
   };
 
+  const handleDateChange = (date: string) => {
+    dispatch(setSelectedDate(date));
+  };
+
+  const handleRetry = () => {
+    dispatch(clearError());
+    if (baseCurrency && selectedDate) {
+      dispatch(loadExchangeRates({ date: selectedDate, baseCurrency }));
+    }
+  };
+
   useEffect(() => {
     dispatch(loadAvailableCurrencies());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (baseCurrency && selectedDate) {
+      dispatch(loadExchangeRates({ date: selectedDate, baseCurrency }));
+    }
+  }, [dispatch, baseCurrency, selectedDate]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -54,10 +74,24 @@ export const ExchangeRatesPage = () => {
       >
         View exchange rates for the last 7 days from your selected date
       </Typography>
+      {error && (
+        <Alert
+          severity="error"
+          action={
+            <Button color="inherit" size="small" onClick={handleRetry}>
+              Retry
+            </Button>
+          }
+          sx={{ mb: 3 }}
+        >
+          {error}
+        </Alert>
+      )}
+
       <Box mb={3}>
         <DatePicker
           selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
+          onDateChange={handleDateChange}
         />
       </Box>
       <Box mb={3}>
