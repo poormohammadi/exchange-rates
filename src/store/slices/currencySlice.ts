@@ -37,23 +37,40 @@ export const loadAvailableCurrencies = createAsyncThunk(
 
 export const loadExchangeRates = createAsyncThunk(
   'currency/loadExchangeRates',
-  async ({ date, baseCurrency }: { date: string; baseCurrency: string }) => {
-    const selectedDate = dayjs(date);
+  async (
+    { date, baseCurrency }: { date: string; baseCurrency: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const selectedDate = dayjs(date);
 
-    const dates = Array.from({ length: DAYS_TO_FETCH }, (_, index) =>
-      selectedDate.subtract(index, 'day').format('YYYY-MM-DD')
-    );
+      const dates = Array.from({ length: DAYS_TO_FETCH }, (_, index) =>
+        selectedDate.subtract(index, 'day').format('YYYY-MM-DD')
+      );
 
-    const ratesPromises = dates.map(async dateStr => {
-      const rates = await fetchExchangeRates(dateStr, baseCurrency);
-      return {
-        date: dateStr,
-        rates,
-      };
-    });
+      const ratesPromises = dates.map(async dateStr => {
+        try {
+          const rates = await fetchExchangeRates(dateStr, baseCurrency);
+          return {
+            date: dateStr,
+            rates,
+          };
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error';
+          throw new Error(
+            `Failed to load rates for ${dateStr}: ${errorMessage}`
+          );
+        }
+      });
 
-    const ratesData = await Promise.all(ratesPromises);
-    return ratesData;
+      const ratesData = await Promise.all(ratesPromises);
+      return ratesData;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Failed to load exchange rates'
+      );
+    }
   }
 );
 
@@ -115,7 +132,10 @@ const currencySlice = createSlice({
       })
       .addCase(loadExchangeRates.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error =
+          (action.payload as string) ||
+          action.error.message ||
+          'Failed to load exchange rates';
       });
   },
 });
