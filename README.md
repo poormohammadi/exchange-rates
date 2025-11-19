@@ -136,12 +136,18 @@ exchange-rates/
 │   ├── api/               # API layer
 │   │   ├── currency.ts    # Currency API functions
 │   │   └── index.ts       # API exports
+│   ├── components/        # Reusable UI components
+│   │   ├── __tests__/     # Component tests
+│   │   │   └── DatePicker.test.tsx
+│   │   ├── DatePicker/    # Date selection component
+│   │   │   ├── DatePicker.tsx
+│   │   │   └── index.ts
+│   │   └── index.ts       # Component exports
 │   ├── pages/             # Page components
 │   │   └── exchange-rates/
 │   │       ├── ExchangeRatesPage.tsx  # Main page component
 │   │       ├── CurrencySelector.tsx   # Currency selection UI
 │   │       ├── CurrencyTable.tsx      # Rates table display
-│   │       ├── DatePicker.tsx         # Date selection component
 │   │       └── index.ts               # Page exports
 │   ├── store/             # Redux store
 │   │   ├── slices/
@@ -225,6 +231,7 @@ https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2024-03-02/v1/currencies/
 The following improvements are planned for future iterations:
 
 ### High Priority
+- [ ] **App Router**: A router should be added to handle different urls and pages. Currently we only have one page so I used the component directly
 - [ ] **React Query Integration**: Implement React Query for better caching, retries, and background data synchronization
 - [ ] **Internationalization (i18n)**: Add `react-i18next` for multi-language support and localized currency formatting
 
